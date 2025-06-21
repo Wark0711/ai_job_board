@@ -9,7 +9,8 @@
     "lint": "next lint",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "inngest": "inngest-cli dev -u http://localhost:3000/api/inngest"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.22.0",
@@ -30,6 +31,7 @@
     "next": "15.4.0-canary.85",
     "react": "19.1.0",
     "react-dom": "19.1.0",
+    "svix": "^1.67.0",
     "tailwind-merge": "^3.3.1",
     "zod": "^3.25.67"
   },
@@ -42,6 +44,7 @@
     "drizzle-kit": "^0.31.1",
     "eslint": "^9",
     "eslint-config-next": "15.4.0-canary.85",
+    "inngest-cli": "^1.8.0",
     "tailwindcss": "^4",
     "tw-animate-css": "^1.3.4",
     "typescript": "^5"
