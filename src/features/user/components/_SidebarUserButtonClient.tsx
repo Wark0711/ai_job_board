@@ -25,7 +25,7 @@ export function SidebarUserButtonClient({ user }: { user: User }) {
                 <DropdownMenuTrigger asChild>
                     <SidebarMenuButton size={'lg'} className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
                         <UserInfo {...user} />
-                        <ChevronsUpDown className="ml-auto group-data=[state-collapse]:hidden" />
+                        <ChevronsUpDown className="ml-auto group-data-[state=collapsed]:hidden" />
                     </SidebarMenuButton>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent sideOffset={4} align="end" side={isMobile ? 'bottom' : 'right'} className="min-w-64 max-w-80">
