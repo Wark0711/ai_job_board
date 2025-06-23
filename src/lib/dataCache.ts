@@ -14,3 +14,11 @@ export function getGlobalTag(tag: CacheTag) {
 export function getIdTag(tag: CacheTag, id: string) {
     return `id:${id}-${tag}` as const
 }
+
+export function getOrgTag(tag: CacheTag, orgId: string) {
+    return `organization:${orgId}-${tag}` as const
+}
+
+export function getJobLisTag(tag: CacheTag, jobListingId: string) {
+    return `jobListing:${jobListingId}-${tag}` as const
+}
