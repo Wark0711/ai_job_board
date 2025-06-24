@@ -10,6 +10,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { experienceLevels, jobListingTypes, locationRequirements, wageIntervals } from "@/drizzle/schema"
 import { formatExperienceLevel, formatJobType, formatLocationRequirement, formatWageInterval } from "../lib/formatters"
 import { StateSelectItems } from "./StateSelectItems"
+import { MarkdownEditor } from "@/components/markdown/MarkdownEditor"
+import { Button } from "@/components/ui/button"
+import { LoadingSwap } from "@/components/LoadingSwap"
+import { createJobListing } from "../actions/action"
+import { toast } from "sonner"
 
 export function JobListingForm() {
 
@@ -29,14 +34,11 @@ export function JobListingForm() {
     })
 
     async function onSubmit(data: z.infer<typeof jobListSchema>) {
-        // const action = jobListing
-        //     ? updateJobListing.bind(null, jobListing.id)
-        //     : createJobListing
-        // const res = await action(data)
+        const res = await createJobListing(data)
 
-        // if (res.error) {
-        //     toast.error(res.message)
-        // }
+        if (res.error) {
+            toast.error(res.message)
+        }
     }
 
     return (
@@ -141,6 +143,7 @@ export function JobListingForm() {
                                             <StateSelectItems />
                                         </SelectContent>
                                     </Select>
+                                    <FormMessage />
                                 </FormItem>
                             )}
                         />
@@ -232,12 +235,15 @@ export function JobListingForm() {
                         <FormItem>
                             <FormLabel>Description</FormLabel>
                             <FormControl>
-                                {/* <MarkdownEditor {...field} markdown={field.value} /> */}
+                                <MarkdownEditor {...field} markdown={field.value} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
                     )}
                 />
+                <Button disabled={form.formState.isSubmitting} type="submit" className="w-full">
+                    <LoadingSwap isLoading={form.formState.isSubmitting}>Create Job Listing</LoadingSwap>
+                </Button>
             </form>
         </Form>
     )
