@@ -4,7 +4,7 @@ import { Ref } from "react"
 import { useIsDarkMode } from "@/hooks/useIsDarkMode";
 import { BlockTypeSelect, BoldItalicUnderlineToggles, headingsPlugin, InsertTable, InsertThematicBreak, listsPlugin, ListsToggle, markdownShortcutPlugin, MDXEditor, MDXEditorMethods, MDXEditorProps, quotePlugin, tablePlugin, thematicBreakPlugin, toolbarPlugin } from "@mdxeditor/editor"
 import { cn } from "@/lib/utils";
-import { markdownClassNames } from "./MarkdownEditor";
+import { markdownClassNames } from "./MarkdownPartial";
 
 export default function InternalMarkdownEditor({
     ref,

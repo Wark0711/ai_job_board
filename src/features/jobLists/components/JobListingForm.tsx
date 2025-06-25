@@ -7,20 +7,34 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { z } from "zod"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { experienceLevels, jobListingTypes, locationRequirements, wageIntervals } from "@/drizzle/schema"
+import { experienceLevels, jobListingTypes, jobListTable, locationRequirements, wageIntervals } from "@/drizzle/schema"
 import { formatExperienceLevel, formatJobType, formatLocationRequirement, formatWageInterval } from "../lib/formatters"
 import { StateSelectItems } from "./StateSelectItems"
 import { MarkdownEditor } from "@/components/markdown/MarkdownEditor"
 import { Button } from "@/components/ui/button"
 import { LoadingSwap } from "@/components/LoadingSwap"
-import { createJobListing } from "../actions/action"
+import { createJobListing, modifyJobListing } from "../actions/action"
 import { toast } from "sonner"
 
-export function JobListingForm() {
+export function JobListingForm({ jobListing }: {
+    jobListing: Pick<
+        typeof jobListTable.$inferSelect,
+        | "title"
+        | "description"
+        | "experienceLevel"
+        | "locationRequirement"
+        | "wage"
+        | "wageInterval"
+        | "type"
+        | "stateAbbreviation"
+        | "city"
+        | "id"
+    >
+}) {
 
     const form = useForm({
         resolver: zodResolver(jobListSchema),
-        defaultValues: {
+        defaultValues: jobListing ?? {
             title: "",
             description: "",
             experienceLevel: "junior",
@@ -34,7 +48,8 @@ export function JobListingForm() {
     })
 
     async function onSubmit(data: z.infer<typeof jobListSchema>) {
-        const res = await createJobListing(data)
+        const action = jobListing ? modifyJobListing.bind(null, jobListing.id): createJobListing
+        const res = await action(data)
 
         if (res.error) {
             toast.error(res.message)
