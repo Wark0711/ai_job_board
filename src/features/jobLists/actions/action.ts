@@ -5,12 +5,12 @@ import { jobListSchema } from "./schema"
 import { getCurrentOrg } from "@/services/clerk/lib/getCurrentAuth"
 import { redirect } from "next/navigation"
 import { getJobListing, insertJobListing, updateJobListing } from "../db/jobListing"
+import { hasOrgUserPermissions } from "@/services/clerk/lib/orgUserPermissions"
 
 export async function createJobListing(unsafeData: z.infer<typeof jobListSchema>) {
     const { orgId } = await getCurrentOrg()
 
-    // || !(await hasOrgUserPermission("org:job_listings:create"))
-    if (orgId == null) {
+    if (orgId == null || !(await hasOrgUserPermissions("org:job_listings:create"))) {
         return { error: true, message: "You don't have permission to create a job listing", }
     }
 
@@ -26,8 +26,7 @@ export async function createJobListing(unsafeData: z.infer<typeof jobListSchema>
 export async function modifyJobListing(id: string, unsafeData: z.infer<typeof jobListSchema>) {
     const { orgId } = await getCurrentOrg()
 
-    // || !(await hasOrgUserPermission("org:job_listings:update")
-    if (orgId == null) {
+    if (orgId == null || !(await hasOrgUserPermissions("org:job_listings:update"))) {
         return { error: true, message: "You don't have permission to update this job listing" }
     }
 
