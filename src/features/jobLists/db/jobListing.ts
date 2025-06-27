@@ -8,7 +8,7 @@ export async function getJobListing(id: string, orgId: string) {
     "use cache"
     cacheTag(getJobListIdTag(id))
 
-    return db.query.jobListTable.findFirst({where: and(eq(jobListTable.id, id),eq(jobListTable.organizationId, orgId))})
+    return db.query.jobListTable.findFirst({ where: and(eq(jobListTable.id, id), eq(jobListTable.organizationId, orgId)) })
 }
 
 export async function insertJobListing(jobListing: typeof jobListTable.$inferInsert) {
@@ -28,4 +28,13 @@ export async function updateJobListing(id: string, jobListing: Partial<typeof jo
 
     revalidateJobListCache(updatedListing)
     return updatedListing
+}
+
+export async function deleteJobListing(id: string) {
+    const [deletedJobListing] = await db.delete(jobListTable).where(eq(jobListTable.id, id)).returning({
+        id: jobListTable.id, orgId: jobListTable.organizationId
+    })
+
+    revalidateJobListCache(deletedJobListing)
+    return deletedJobListing
 }
