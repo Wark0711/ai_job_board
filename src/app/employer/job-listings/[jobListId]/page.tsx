@@ -116,8 +116,7 @@ function StatusUpdateButton({ status, id }: { status: JobListingStatus, id: stri
                         }}
                         otherwise={
                             <UpgradePopover buttonText={statusToggleButtonText(status)} popoverText="You must upgrade your plan to publish more job listings." />
-                        }
-                    >
+                        }>
                         {button}
                     </AsyncIf>
                     : button
@@ -149,8 +148,7 @@ function FeaturedToggleButton({ isFeatured, id }: { isFeatured: boolean, id: str
                                 buttonText={featuredToggleButtonText(isFeatured)}
                                 popoverText="You must upgrade your plan to feature more job listings."
                             />
-                        }
-                    >
+                        }>
                         {button}
                     </AsyncIf>
             }

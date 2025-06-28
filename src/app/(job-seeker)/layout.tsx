@@ -4,11 +4,12 @@ import { SidebarUserButton } from "@/features/user/components/SidebarUserButton"
 import { BrainCircuitIcon, ClipboardListIcon, LayoutDashboardIcon, LogInIcon } from "lucide-react";
 import { ReactNode } from "react";
 
-export default function JobSeekerLayout({ children }: { children: ReactNode }) {
+export default function JobSeekerLayout({ children, sidebar }: { children: ReactNode, sidebar: ReactNode }) {
     return (
         <AppSidebar
             content={
                 <>
+                    {sidebar}
                     <SidebarNavMenuGroup
                         className="mt-auto"
                         items={[
