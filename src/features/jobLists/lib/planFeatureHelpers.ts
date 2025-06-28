@@ -14,7 +14,7 @@ export async function hasReachedMaxFeaturedJobListings() {
 
     const canFeature = await Promise.all([
         hasPlanFeature("1_featured_job_listing").then(has => has && count < 1),
-        hasPlanFeature("unlimited_featured_jobs_listings"),
+        hasPlanFeature("unlimited_featured_job_listings"),
     ])
 
     return !canFeature.some(Boolean)
