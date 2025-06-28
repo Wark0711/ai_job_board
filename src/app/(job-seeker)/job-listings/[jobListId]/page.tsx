@@ -27,6 +27,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { differenceInDays } from "date-fns"
 import { connection } from "next/server"
 import { getUserResumeIdTag } from "@/features/user/db/cache/userResume"
+import { NewJobListingApplicationForm } from "@/features/jobListApps/components/NewJobListingApplicationForm"
 
 type Props = { params: Promise<{ jobListId: string }>, searchParams: Promise<Record<string, string | string[]>> }
 
@@ -183,12 +184,11 @@ async function ApplyButton({ jobListId }: { jobListId: string }) {
                 <DialogHeader>
                     <DialogTitle>Application</DialogTitle>
                     <DialogDescription>
-                        Applying for a job cannot be undone and is something you can only do
-                        once per job listing.
+                        Applying for a job cannot be undone and is something you can only do once per job listing.
                     </DialogDescription>
                 </DialogHeader>
                 <div className="flex-1 overflow-y-auto">
-                    {/* <NewJobListingApplicationForm jobListingId={jobListId} /> */}
+                    <NewJobListingApplicationForm jobListId={jobListId} />
                 </div>
             </DialogContent>
         </Dialog>
