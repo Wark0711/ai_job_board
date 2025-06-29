@@ -10,8 +10,8 @@ type Events = {
     "clerk/organization.created": ClerkWebhookData<OrganizationJSON>
     "clerk/organization.updated": ClerkWebhookData<OrganizationJSON>
     "clerk/organization.deleted": ClerkWebhookData<DeletedObjectJSON>
-    "app/jobListingApplication.created": { data: { jobListId: string, userId: string } },
-    "app/resume.uploaded": { data: { user: { id: string } } }
+    "app/jobListingApplication.created": { data: { jobListId: string, userId: string } }
+    "app/resume.uploaded": { user: { id: string } }
 }
 
 // Create a client to send and receive events

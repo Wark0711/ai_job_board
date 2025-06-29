@@ -28,7 +28,7 @@ export async function createJobListApp(jobListId: string, unsafeData: z.infer<ty
 
     await insertJobListingApplication({ jobListingId: jobListId, userId, ...data, })
 
-    // await inngest.send({ name: "app/jobListingApplication.created", data: { jobListId, userId } })
+    await inngest.send({ name: "app/jobListingApplication.created", data: { jobListId, userId } })
     return { error: false, message: "Your application was successfully submitted" }
 }
 

@@ -10,6 +10,5 @@ type PlanFeature =
 
 export async function hasPlanFeature(feature: PlanFeature) {
     const { has } = await auth()
-    console.log(feature, has({ feature }));
     return has({ feature })
 }

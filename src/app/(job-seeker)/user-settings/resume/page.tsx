@@ -58,9 +58,7 @@ async function AISummaryCard() {
         <Card>
             <CardHeader className="border-b">
                 <CardTitle>AI Summary</CardTitle>
-                <CardDescription>
-                    This is an AI-generated summary of your resume. This is used by
-                    employers to quickly understand your qualifications and experience.
+                <CardDescription> This is an AI-generated summary of your resume. This is used by employers to quickly understand your qualifications and experience.
                 </CardDescription>
             </CardHeader>
             <CardContent>
