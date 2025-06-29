@@ -6,7 +6,8 @@ export const env = createEnv({
         NEON_DB_URL: z.string().url(),
         CLERK_SECRET_KEY: z.string().min(1),
         CLERK_WEBHOOK_SECRET: z.string().min(1),
-        UPLOADTHING_TOKEN: z.string().min(1)
+        UPLOADTHING_TOKEN: z.string().min(1),
+        GEMINI_API_KEY: z.string().min(1)
     },
     emptyStringAsUndefined: true,
     experimental__runtimeEnv: process.env

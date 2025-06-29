@@ -4,8 +4,6 @@ import { ReactNode, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
 import { Button } from "../ui/button";
 
-export const markdownClassNames = "max-w-none prose prose-neutral dark:prose-invert font-sans"
-
 export function MarkdownPartial({ mainMarkdown, dialogMarkdown, dialogTitle }: { mainMarkdown: ReactNode, dialogMarkdown: ReactNode, dialogTitle: string }) {
 
     const [isOverflowing, setIsOverflowing] = useState(false)

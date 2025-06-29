@@ -26,8 +26,7 @@ export const customFileRouter = {
         await upsertUserResume(userId, { resumeFileUrl: file.ufsUrl, resumeFileKey: file.key })
         if (resumeFileKey != null) await uploadthing.deleteFiles(resumeFileKey)
 
-        // await inngest.send({ name: "app/resume.uploaded", user: { id: userId } })
-
+        await inngest.send({ name: "app/resume.uploaded", user: { id: userId } })
         return { message: "Resume uploaded successfully" }
     }),
 } satisfies FileRouter
