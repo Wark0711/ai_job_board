@@ -1,13 +1,14 @@
 "use server"
 
 import { z } from "zod"
-import { jobListSchema } from "./schema"
-import { getCurrentOrg } from "@/services/clerk/lib/getCurrentAuth"
+import { jobListingAiSearchSchema, jobListSchema } from "./schema"
+import { getCurrentOrg, getCurrentUser } from "@/services/clerk/lib/getCurrentAuth"
 import { redirect } from "next/navigation"
-import { deleteJobListing, getJobListing, insertJobListing, updateJobListing } from "../db/jobListing"
+import { deleteJobListing, getJobListing, getPublicJobListings, insertJobListing, updateJobListing } from "../db/jobListing"
 import { hasOrgUserPermissions } from "@/services/clerk/lib/orgUserPermissions"
 import { getNextJobListingStatus } from "../lib/utils"
 import { hasReachedMaxFeaturedJobListings, hasReachedMaxPublishedJobListings } from "../lib/planFeatureHelpers"
+import { getMatchingJobListings } from "@/services/inngest/ai/matchJobLists"
 
 export async function createJobListing(unsafeData: z.infer<typeof jobListSchema>) {
     const { orgId } = await getCurrentOrg()
@@ -94,4 +95,19 @@ export async function removeJobListing(id: string) {
 
     await deleteJobListing(id)
     redirect("/employer")
+}
+
+export async function getAiJobListingSearchResults(unsafe: z.infer<typeof jobListingAiSearchSchema>): Promise<
+    { error: true; message: string } | { error: false; jobIds: string[] }> {
+    const { success, data } = jobListingAiSearchSchema.safeParse(unsafe)
+    if (!success) return { error: true, message: "There was an error processing your search query" }
+
+    const { userId } = await getCurrentUser()
+    if (userId == null) return { error: true, message: "You need an account to use AI job search" }
+
+    const allListings = await getPublicJobListings()
+    const matchedListings = await getMatchingJobListings(data.query, allListings, { maxNumberOfJobs: 10 })
+    if (matchedListings.length === 0) return { error: true, message: "No jobs match your search criteria" }
+
+    return { error: false, jobIds: matchedListings }
 }
