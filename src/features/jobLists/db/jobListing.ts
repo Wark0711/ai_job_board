@@ -1,7 +1,7 @@
 import { db } from "@/drizzle/db"
 import { jobListTable } from "@/drizzle/schema"
 import { and, eq } from "drizzle-orm"
-import { getJobListIdTag, revalidateJobListCache } from "./cache/jobLists"
+import { getJobListGlobalTag, getJobListIdTag, revalidateJobListCache } from "./cache/jobLists"
 import { cacheTag } from "next/dist/server/use-cache/cache-tag"
 
 export async function getJobListing(id: string, orgId: string) {
@@ -9,6 +9,15 @@ export async function getJobListing(id: string, orgId: string) {
     cacheTag(getJobListIdTag(id))
 
     return db.query.jobListTable.findFirst({ where: and(eq(jobListTable.id, id), eq(jobListTable.organizationId, orgId)) })
+}
+
+export async function getPublicJobListings() {
+    "use cache"
+    cacheTag(getJobListGlobalTag())
+
+    return db.query.jobListTable.findMany({
+        where: eq(jobListTable.status, "published"),
+    })
 }
 
 export async function insertJobListing(jobListing: typeof jobListTable.$inferInsert) {
