@@ -1,5 +1,6 @@
 import { EventSchemas, Inngest } from "inngest";
-import { DeletedObjectJSON, OrganizationJSON, UserJSON } from "@clerk/nextjs/server";
+import { DeletedObjectJSON, OrganizationJSON, OrganizationMembershipJSON, UserJSON } from "@clerk/nextjs/server";
+import { jobListTable } from "@/drizzle/schema";
 
 type ClerkWebhookData<T> = { data: { data: T, raw: string, headers: Record<string, string> } }
 
@@ -10,8 +11,23 @@ type Events = {
     "clerk/organization.created": ClerkWebhookData<OrganizationJSON>
     "clerk/organization.updated": ClerkWebhookData<OrganizationJSON>
     "clerk/organization.deleted": ClerkWebhookData<DeletedObjectJSON>
+    "clerk/organizationMembership.created": ClerkWebhookData<OrganizationMembershipJSON>
+    "clerk/organizationMembership.deleted": ClerkWebhookData<OrganizationMembershipJSON>
     "app/jobListingApplication.created": { data: { jobListId: string, userId: string } }
     "app/resume.uploaded": { user: { id: string } }
+    "app/email.daily-user-job-listings": {
+        data: {
+            aiPrompt?: string
+            jobListings: (Omit<
+                typeof jobListTable.$inferSelect,
+                "createdAt" | "postedAt" | "updatedAt" | "status" | "organizationId"
+            > & { organizationName: string })[]
+        }
+        user: {
+            email: string
+            name: string
+        }
+    }
 }
 
 // Create a client to send and receive events
