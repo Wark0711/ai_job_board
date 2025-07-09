@@ -1,6 +1,6 @@
 import { EventSchemas, Inngest } from "inngest";
 import { DeletedObjectJSON, OrganizationJSON, OrganizationMembershipJSON, UserJSON } from "@clerk/nextjs/server";
-import { jobListTable } from "@/drizzle/schema";
+import { jobListAppTable, jobListTable } from "@/drizzle/schema";
 
 type ClerkWebhookData<T> = { data: { data: T, raw: string, headers: Record<string, string> } }
 
@@ -22,6 +22,21 @@ type Events = {
                 typeof jobListTable.$inferSelect,
                 "createdAt" | "postedAt" | "updatedAt" | "status" | "organizationId"
             > & { organizationName: string })[]
+        }
+        user: {
+            email: string
+            name: string
+        }
+    }
+    "app/email.daily-organization-user-applications": {
+        data: {
+            applications: (Pick<typeof jobListAppTable.$inferSelect, "rating"> & {
+                userName: string
+                organizationId: string
+                organizationName: string
+                jobListingId: string
+                jobListingTitle: string
+            })[]
         }
         user: {
             email: string

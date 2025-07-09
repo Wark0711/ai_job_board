@@ -7,13 +7,17 @@ import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
 import { db } from "@/drizzle/db";
-import { JobListingStatus, jobListTable } from "@/drizzle/schema";
+import { jobListAppTable, JobListingStatus, jobListTable } from "@/drizzle/schema";
+import { ApplicationTable, SkeletonApplicationTable } from "@/features/jobListApps/components/ApplicationTable";
+import { getJobListingApplicationJobListingTag } from "@/features/jobListApps/db/cache/jobListApps";
 import { removeJobListing, toggleJobListingFeatured, toggleJobListingStatus } from "@/features/jobLists/actions/action";
 import { JobListingBadges } from "@/features/jobLists/components/JobListingBadges";
 import { getJobListIdTag } from "@/features/jobLists/db/cache/jobLists";
 import { formatJobListingStatus } from "@/features/jobLists/lib/formatters";
 import { hasReachedMaxFeaturedJobListings, hasReachedMaxPublishedJobListings } from "@/features/jobLists/lib/planFeatureHelpers";
 import { getNextJobListingStatus } from "@/features/jobLists/lib/utils";
+import { getUserResumeIdTag } from "@/features/user/db/cache/userResume";
+import { getUserIdTag } from "@/features/user/db/cache/users";
 import { getCurrentOrg } from "@/services/clerk/lib/getCurrentAuth";
 import { hasOrgUserPermissions } from "@/services/clerk/lib/orgUserPermissions";
 import { and, eq } from "drizzle-orm";
@@ -85,12 +89,12 @@ async function SuspendedPage({ params }: Props) {
 
             <Separator />
 
-            {/* <div className="space-y-6">
+            <div className="space-y-6">
                 <h2 className="text-xl font-semibold">Applications</h2>
                 <Suspense fallback={<SkeletonApplicationTable />}>
-                    <Applications jobListingId={jobListingId} />
+                    <Applications jobListId={jobListId} />
                 </Suspense>
-            </div> */}
+            </div>
         </div>
     )
 }
@@ -212,6 +216,33 @@ function featuredToggleButtonText(isFeatured: boolean) {
     )
 }
 
+async function Applications({ jobListId }: { jobListId: string }) {
+
+    const applications = await getJobListingApps(jobListId)
+
+    return (
+        <ApplicationTable
+            applications={applications.map(a => ({
+                ...a,
+                user: {
+                    ...a.user,
+                    resume: a.user.resume
+                        ? {
+                            ...a.user.resume,
+                            markdownSummary: a.user.resume.aiSummary ? (
+                                <MarkdownRenderer source={a.user.resume.aiSummary} />
+                            ) : null,
+                        }
+                        : null,
+                },
+                coverLetterMarkdown: a.coverLetter ? <MarkdownRenderer source={a.coverLetter} /> : null,
+            }))}
+            canUpdateRating={await hasOrgUserPermissions("org:job_listing_applications:change_rating")}
+            canUpdateStage={await hasOrgUserPermissions("org:job_listing_applications:change_stage")}
+        />
+    )
+}
+
 async function getJobList(id: string, orgId: string) {
     "use cache"
     cacheTag(getJobListIdTag(id))
@@ -219,4 +250,31 @@ async function getJobList(id: string, orgId: string) {
     return db.query.jobListTable.findFirst({
         where: and(eq(jobListTable.id, id), eq(jobListTable.organizationId, orgId))
     })
+}
+
+async function getJobListingApps(jobListId: string) {
+    "use cache"
+    cacheTag(getJobListingApplicationJobListingTag(jobListId))
+
+    const data = await db.query.jobListAppTable.findMany({
+        where: eq(jobListAppTable.jobListingId, jobListId),
+        columns: { coverLetter: true, createdAt: true, stage: true, rating: true, jobListingId: true },
+        with: {
+            user: {
+                columns: { id: true, name: true, imageUrl: true },
+                with: {
+                    resume: {
+                        columns: { resumeFileUrl: true, aiSummary: true },
+                    },
+                },
+            },
+        },
+    })
+
+    data.forEach(({ user }) => {
+        cacheTag(getUserIdTag(user.id))
+        cacheTag(getUserResumeIdTag(user.id))
+    })
+
+    return data
 }
